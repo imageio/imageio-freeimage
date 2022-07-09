@@ -86,7 +86,8 @@ jobs:
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
-          virtualenvs-create: false
+          virtualenvs-create: True
+          virtualenvs-in-project: True
       - name: Install Project
         shell: bash
         run: |
