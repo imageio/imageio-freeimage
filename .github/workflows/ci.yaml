@@ -65,13 +65,6 @@ jobs:
         run: |
           source $VENV
           pytest -v --github-username "anything" --github-token ${{ secrets.GITHUB_TOKEN }}
-      # - name: Run All Unit tests
-      #   run: |
-      #       coverage run -m pytest -v --github-username "anything" --github-token ${{ secrets.GITHUB_TOKEN }}
-      # - name: Upload coverage to Codecov
-      #   run: |
-      #       curl -s https://codecov.io/bash | bash
-      #   shell: bash
 
   pypy:
     name: "${{ matrix.os }} / ${{ matrix.pyversion }}"
