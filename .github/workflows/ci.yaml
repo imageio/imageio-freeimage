@@ -63,11 +63,10 @@ jobs:
       - name: Install Project
         shell: bash
         run: |
-          poetry install --no-interaction
+          poetry install --no-interaction -v
       - name: Run Tests
         run: |
           source $VENV
-          pip freeze
           pytest -v --github-username "anything" --github-token ${{ secrets.GITHUB_TOKEN }}
       # - name: Run All Unit tests
       #   run: |
