@@ -56,14 +56,12 @@ jobs:
         with:
           python-version: ${{ matrix.pyversion }}
       - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
       - name: Install Project
         shell: bash
         run: |
-          poetry install --no-interaction -vv
+          poetry install --no-interaction -v
       - name: Run Tests
         run: |
           source $VENV
@@ -91,12 +89,9 @@ jobs:
         with:
           python-version: "${{ matrix.pyversion }}"
       - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: false
+        run: curl -sSL https://install.python-poetry.org | pypy3 -
       - name: Install Project
         shell: bash
-        # /opt/hostedtoolcache/PyPy/3.8.13/x64/bin/pypy3
         run: |
           poetry env use $(which pypy3)
           poetry install --no-interaction -vv
