@@ -83,16 +83,13 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: "${{ matrix.pyversion }}"
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: True
-          virtualenvs-in-project: True
-      - name: Install Project
+      - name: Install Poetry & Project
         shell: bash
         run: |
-          poetry env use $(which pypy3)
-          poetry install --no-interaction -vv
+          pypy3 -m pip install poetry
+          pypy3 -m poetry config virtualenvs.in-project true
+          pypy3 -m poetry env use $(which pypy3)
+          pypy3 -m poetry install --no-interaction -vv
       - name: Run Unit tests
         run: |
             pypy3 -m pytest -v --github-username "anything" --github-token ${{ secrets.GITHUB_TOKEN }}
