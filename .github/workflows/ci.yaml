@@ -90,15 +90,15 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: "${{ matrix.pyversion }}"
-      - name: MacOS Numpy Fix
-        if: runner.os == 'macOS'
-        run: |
-            brew install openblas
-            OPENBLAS="$(brew --prefix openblas)" pypy3 -m pip install numpy
-      - name: Install dependencies
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: false
+      - name: Install Project
         shell: bash
         run: |
-            pypy3 -m pip install .[test,all-plugins-pypy]
+          poetry env use /usr/local/bin/pypy3
+          poetry install --no-interaction -vv
       - name: Run Unit tests
         run: |
             pytest -v --github-username "anything" --github-token ${{ secrets.GITHUB_TOKEN }}
