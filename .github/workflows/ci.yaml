@@ -63,7 +63,7 @@ jobs:
       - name: Install Project
         shell: bash
         run: |
-          poetry install --no-interaction -v
+          poetry install --no-interaction -vv
       - name: Run Tests
         run: |
           source $VENV
