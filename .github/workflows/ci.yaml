@@ -90,6 +90,7 @@ jobs:
           pypy3 -m poetry config virtualenvs.in-project true
           pypy3 -m poetry env use $(which pypy3)
           pypy3 -m poetry install --no-interaction -vv
+          pypy3 -m env list
       - name: Run Unit tests
         run: |
-            pypy3 -m pytest -v --github-username "anything" --github-token ${{ secrets.GITHUB_TOKEN }}
+            pypy3 -m poetry run pytest -v --github-username "anything" --github-token ${{ secrets.GITHUB_TOKEN }}
