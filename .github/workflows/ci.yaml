@@ -96,10 +96,10 @@ jobs:
           virtualenvs-create: false
       - name: Install Project
         shell: bash
+        # /opt/hostedtoolcache/PyPy/3.8.13/x64/bin/pypy3
         run: |
-          which pypy3 || which pypy
-          poetry env use /usr/local/bin/pypy3
+          poetry env use $(which pypy3)
           poetry install --no-interaction -vv
       - name: Run Unit tests
         run: |
-            pytest -v --github-username "anything" --github-token ${{ secrets.GITHUB_TOKEN }}
+            pypy3 -m pytest -v --github-username "anything" --github-token ${{ secrets.GITHUB_TOKEN }}
