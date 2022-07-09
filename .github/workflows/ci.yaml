@@ -56,8 +56,7 @@ jobs:
         with:
           python-version: ${{ matrix.pyversion }}
       - name: Install Poetry
-        run: |
-          curl -sSL https://install.python-poetry.org | python3 -
+        uses: snok/install-poetry@v1
       - name: Install Project
         shell: bash
         run: |
@@ -89,7 +88,7 @@ jobs:
         with:
           python-version: "${{ matrix.pyversion }}"
       - name: Install Poetry
-        run: curl -sSL https://install.python-poetry.org | pypy3 -
+        uses: snok/install-poetry@v1
       - name: Install Project
         shell: bash
         run: |
