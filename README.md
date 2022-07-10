@@ -17,6 +17,7 @@ it allows using [FreeImage](https://freeimage.sourceforge.io/) with
 
 ```
 pip install imageio-freeimage
+python -c "imageio.plugins.freeimage.download()"
 ```
 
 ## Usage (and Examples)
