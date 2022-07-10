@@ -17,7 +17,8 @@ from imageio import core
 from imageio.core import IS_PYPY
 from pytest import raises, skip
 from conftest import deprecated_test
-import imageio_freeimage
+
+import imageio_freeimage  # noqa:F401
 
 
 @pytest.fixture(scope="module")

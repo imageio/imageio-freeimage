@@ -1,4 +1,4 @@
-from imageio.config import known_plugins, known_extensions, PluginConfig, FileExtension
+from imageio.config import known_plugins, PluginConfig
 
 # Register the FreeImage Plugin
 FREEIMAGE_FORMATS = [
