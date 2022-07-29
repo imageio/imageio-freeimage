@@ -16,10 +16,11 @@ class CustomDevelop(develop):
     def run(self) -> None:
         # download freeimage
         if not Path("FreeImage").exists():
-            r = requests.get("https://sourceforge.net/projects/freeimage/files/Source%20Distribution/3.18.0/FreeImage3180.zip/download")
+            r = requests.get(
+                "https://sourceforge.net/projects/freeimage/files/Source%20Distribution/3.18.0/FreeImage3180.zip/download"
+            )
             z = zipfile.ZipFile(io.BytesIO(r.content))
             z.extractall(".")
-
 
         # build freeimage
         self.run_command("build_clib")
@@ -28,8 +29,13 @@ class CustomDevelop(develop):
 
 
 class CustomBuildClib(build_clib):
-    user_options = build_clib.user_options + [('shared-location=', 's',
-         "copy the shared C/C++ libraries here after linking."),]
+    user_options = build_clib.user_options + [
+        (
+            "shared-location=",
+            "s",
+            "copy the shared C/C++ libraries here after linking.",
+        ),
+    ]
 
     def initialize_options(self) -> None:
         self.shared_location = None
@@ -48,10 +54,7 @@ class CustomBuildClib(build_clib):
 
                 file_name = self.compiler.library_filename(lib_name, lib_type="shared")
 
-                shutil.copy(
-                    str(build_dir / file_name),
-                    str(out_dir / file_name)
-                )
+                shutil.copy(str(build_dir / file_name), str(out_dir / file_name))
 
     def build_libraries(self, libraries):
         # Note: this is a copy of build_clib except for the part marked below
@@ -143,7 +146,8 @@ class CustomBuildClib(build_clib):
                     debug=self.debug,
                     extra_preargs=preargs,
                     libraries=build_info.get("libraries"),
-                    library_dirs = build_info.get("library_dirs", list()) + [self.build_clib],
+                    library_dirs=build_info.get("library_dirs", list())
+                    + [self.build_clib],
                 )
             else:
                 # Now "link" the object files together into a static library.
@@ -156,99 +160,102 @@ class CustomBuildClib(build_clib):
                     debug=self.debug,
                 )
 
+
 def build(setup_kwargs):
     import win32_conf as conf
 
-    setup_kwargs.update({
-        "libraries": [
-            (
-                "zlib",
-                {
-                    "sources": conf.ZLib.source,
-                    "include_dirs": conf.ZLib.include,
-                    "macros": conf.ZLib.macros,
+    setup_kwargs.update(
+        {
+            "libraries": [
+                (
+                    "zlib",
+                    {
+                        "sources": conf.ZLib.source,
+                        "include_dirs": conf.ZLib.include,
+                        "macros": conf.ZLib.macros,
+                    },
+                ),
+                (
+                    "jxr",
+                    {
+                        "sources": conf.LibJXR.source,
+                        "include_dirs": conf.LibJXR.include,
+                        "macros": conf.LibJXR.macros,
+                    },
+                ),
+                (
+                    "openexr",
+                    {
+                        "sources": conf.OpenEXR.source,
+                        "include_dirs": conf.OpenEXR.include,
+                        "macros": conf.OpenEXR.macros,
+                    },
+                ),
+                (
+                    "webp",
+                    {
+                        "sources": conf.LibWebP.source,
+                        "include_dirs": conf.LibWebP.include,
+                        "macros": conf.LibWebP.macros,
+                    },
+                ),
+                (
+                    "tiff4",
+                    {
+                        "sources": conf.LibTIFF4.source,
+                        "include_dirs": conf.LibTIFF4.include,
+                        "macros": conf.LibTIFF4.macros,
+                    },
+                ),
+                (
+                    "rawlite",
+                    {
+                        "sources": conf.LibRawLite.source,
+                        "include_dirs": conf.LibRawLite.include,
+                        "macros": conf.LibRawLite.macros,
+                    },
+                ),
+                (
+                    "png",
+                    {
+                        "sources": conf.LibPNG.source,
+                        "include_dirs": conf.LibPNG.include,
+                        "macros": conf.LibPNG.macros,
+                    },
+                ),
+                (
+                    "openjpeg",
+                    {
+                        "sources": conf.LibOpenJPEG.source,
+                        "include_dirs": conf.LibOpenJPEG.include,
+                        "macros": conf.LibOpenJPEG.macros,
+                    },
+                ),
+                (
+                    "jpeg",
+                    {
+                        "sources": conf.LibJPEG.source,
+                        "include_dirs": conf.LibJPEG.include,
+                        "macros": conf.LibJPEG.macros,
+                    },
+                ),
+                (
+                    "freeimage",
+                    {
+                        "shared": True,
+                        "sources": conf.FreeImage.source,
+                        "include_dirs": conf.FreeImage.include,
+                        "macros": conf.FreeImage.macros,
+                        "libraries": conf.FreeImage.libraries,
+                    },
+                ),
+            ],
+            "options": {
+                "build_clib": {
+                    "shared_location": "imageio_freeimage/_lib",
+                    "debug": False,
                 }
-            ),
-            (
-                "jxr",
-                {
-                    "sources": conf.LibJXR.source,
-                    "include_dirs": conf.LibJXR.include,
-                    "macros": conf.LibJXR.macros,
-                }
-            ),
-            (
-                "openexr",
-                {
-                    "sources": conf.OpenEXR.source,
-                    "include_dirs": conf.OpenEXR.include,
-                    "macros": conf.OpenEXR.macros,
-                }
-            ),
-            (
-                "webp",
-                {
-                    "sources": conf.LibWebP.source,
-                    "include_dirs": conf.LibWebP.include,
-                    "macros": conf.LibWebP.macros,
-                }
-            ),
-            (
-                "tiff4",
-                {
-                    "sources": conf.LibTIFF4.source,
-                    "include_dirs": conf.LibTIFF4.include,
-                    "macros": conf.LibTIFF4.macros,
-                }
-            ),
-            (
-                "rawlite",
-                {
-                    "sources": conf.LibRawLite.source,
-                    "include_dirs": conf.LibRawLite.include,
-                    "macros": conf.LibRawLite.macros,
-                }
-            ),
-            (
-                "png",
-                {
-                    "sources": conf.LibPNG.source,
-                    "include_dirs": conf.LibPNG.include,
-                    "macros": conf.LibPNG.macros,
-                }
-            ),
-            (
-                "openjpeg",
-                {
-                    "sources": conf.LibOpenJPEG.source,
-                    "include_dirs": conf.LibOpenJPEG.include,
-                    "macros": conf.LibOpenJPEG.macros,
-                }
-            ),
-            (
-                "jpeg",
-                {
-                    "sources": conf.LibJPEG.source,
-                    "include_dirs": conf.LibJPEG.include,
-                    "macros": conf.LibJPEG.macros,
-                }
-            ),
-            (
-                "freeimage",
-                {
-                    "shared": True,
-                    "sources":conf.FreeImage.source,
-    	            "include_dirs": conf.FreeImage.include,
-                    "macros": conf.FreeImage.macros,
-                    "libraries": conf.FreeImage.libraries,
-                },
-            ),
-        ],
-        "options": {
-            "build_clib": {
-                "shared_location": "imageio_freeimage/_lib",
-                "debug": False,
-            }
-        },
-        "cmdclass": {"develop": CustomDevelop, "build_clib": CustomBuildClib},
-    })
+            },
+            "cmdclass": {"develop": CustomDevelop, "build_clib": CustomBuildClib},
+        }
+    )

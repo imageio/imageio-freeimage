@@ -4,6 +4,8 @@
 dist/
 FreeImage/
 build/
+*.egg-info/
+imageio_freeimage/_lib/
 
 *.pyc
 poetry.lock
