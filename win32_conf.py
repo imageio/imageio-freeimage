@@ -308,11 +308,12 @@ class LibPNG:
 
 class LibRawLite:
     macros = [
-        ("WIN32", 1),
-        ("_DEBUG", 1),
-        ("_LIB", 1),
-        ("_CRT_SECURE_NO_WARNINGS", 1),
-        ("LIBRAW_NODLL", 1),
+        ("WIN32", None),
+        ("NDEBUG", None),
+        ("_LIB", None),
+        ("_CRT_SECURE_NO_WARNINGS", None),
+        ("LIBRAW_NODLL", None),
+        
     ]
     source = [
         "FreeImage/Source/LibRawLite/internal/dcraw_common.cpp",
