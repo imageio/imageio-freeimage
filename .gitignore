@@ -2,6 +2,7 @@
 .vscode/
 **/__pycache__/
 dist/
+FreeImage/
 
 *.pyc
 poetry.lock

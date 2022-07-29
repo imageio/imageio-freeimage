@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/imageio/imageio-freeimage/actions/workflows/ci.yaml/badge.svg?branch=master)](https://github.com/imageio/imageio-freeimage/actions/workflows/ci.yaml)
 
-ImageIO FreeImage is a ImageIO plugin for the FreeImage library. In other words,
+ImageIO FreeImage is an ImageIO plugin for the FreeImage library. In other words,
 it allows using [FreeImage](https://freeimage.sourceforge.io/) with
 [ImageIO](https://github.com/imageio/imageio).
 
