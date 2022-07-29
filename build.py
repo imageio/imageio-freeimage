@@ -7,11 +7,23 @@ from setuptools.dep_util import newer_pairwise_group
 import platform
 from pathlib import Path
 import shutil
+import requests
+import zipfile
+import io
 
 
 class CustomDevelop(develop):
     def run(self) -> None:
+        # download freeimage
+        if not Path("FreeImage").exists():
+            r = requests.get("https://sourceforge.net/projects/freeimage/files/Source%20Distribution/3.18.0/FreeImage3180.zip/download")
+            z = zipfile.ZipFile(io.BytesIO(r.content))
+            z.extractall(".")
+
+
+        # build freeimage
         self.run_command("build_clib")
+
         super().run()
 
 
@@ -131,7 +143,7 @@ class CustomBuildClib(build_clib):
                     debug=self.debug,
                     extra_preargs=preargs,
                     libraries=build_info.get("libraries"),
-                    library_dirs = build_info.get("library_dirs"),
+                    library_dirs = build_info.get("library_dirs", list()) + [self.build_clib],
                 )
             else:
                 # Now "link" the object files together into a static library.
@@ -232,9 +244,6 @@ def build(setup_kwargs):
                 },
             ),
         ],
-        # configure the build_clib command to place the shared library into
-        # extension/lib. This is purely my convention, so feel free to
-        # adjust this as needed.
         "options": {
             "build_clib": {
                 "shared_location": "imageio_freeimage/_lib",
