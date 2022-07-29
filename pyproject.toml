@@ -7,6 +7,7 @@ license = "FreeImage Open Source Dual-License"
 readme = "README.md"
 repository = "https://github.com/imageio/imageio-freeimage"
 include = [
+    { path="imageio_freeimage/_lib/*", format = "wheel" },
     "FIPL LICENSE",
     "LICENSE",
 ]
