@@ -29,7 +29,7 @@ import numpy as np
 
 from imageio.core import Format, image_as_uint
 from imageio.core.request import RETURN_BYTES
-from ._freeimage import fi, download, IO_FLAGS, FNAME_PER_PLATFORM  # noqa
+from ._freeimage import fi, IO_FLAGS  # noqa
 
 
 # todo: support files with only meta data
