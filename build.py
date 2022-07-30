@@ -117,15 +117,13 @@ class CustomBuildClib(build_clib):
                 # First, compile the source code to object files in the library
                 # directory.  (This should probably change to putting object
                 # files in a temporary build directory.)
-                macros = build_info.get("macros")
-                include_dirs = build_info.get("include_dirs")
-                cflags = build_info.get("cflags")
                 self.compiler.compile(
                     sources,
                     output_dir=self.build_temp,
-                    macros=macros,
-                    include_dirs=include_dirs,
-                    extra_postargs=cflags,
+                    macros=build_info.get("macros"),
+                    include_dirs=build_info.get("include_dirs"),
+                    extra_preargs=build_info.get("compiler_preargs"),
+                    extra_postargs=build_info.get("compiler_postargs"),
                     debug=self.debug,
                 )
 
@@ -135,9 +133,9 @@ class CustomBuildClib(build_clib):
 
                 if platform.system() == "Windows":
                     # On windows (MSVC) we need to tell the compiler to make a DLL
-                    preargs = ["/DLL"]
+                    preargs = ["/DLL"] + build_info.get("linker_preargs", list())
                 else:
-                    preargs = []
+                    preargs = ["-shared"] + build_info.get("linker_preargs", list())
 
                 self.compiler.link_shared_lib(
                     expected_objects,
@@ -145,6 +143,7 @@ class CustomBuildClib(build_clib):
                     output_dir=self.build_clib,
                     debug=self.debug,
                     extra_preargs=preargs,
+                    extra_postargs=build_info.get("linker_postargs", None),
                     libraries=build_info.get("libraries"),
                     library_dirs=build_info.get("library_dirs", list())
                     + [self.build_clib],
@@ -162,94 +161,116 @@ class CustomBuildClib(build_clib):
 
 
 def build(setup_kwargs):
-    import win32_conf as conf
+    if platform.system() == "Windows":
+        import win32_conf as conf
+
+        libraries = [
+            (
+                "zlib",
+                {
+                    "sources": conf.ZLib.source,
+                    "include_dirs": conf.ZLib.include,
+                    "macros": conf.ZLib.macros,
+                },
+            ),
+            (
+                "jxr",
+                {
+                    "sources": conf.LibJXR.source,
+                    "include_dirs": conf.LibJXR.include,
+                    "macros": conf.LibJXR.macros,
+                },
+            ),
+            (
+                "openexr",
+                {
+                    "sources": conf.OpenEXR.source,
+                    "include_dirs": conf.OpenEXR.include,
+                    "macros": conf.OpenEXR.macros,
+                },
+            ),
+            (
+                "webp",
+                {
+                    "sources": conf.LibWebP.source,
+                    "include_dirs": conf.LibWebP.include,
+                    "macros": conf.LibWebP.macros,
+                },
+            ),
+            (
+                "tiff4",
+                {
+                    "sources": conf.LibTIFF4.source,
+                    "include_dirs": conf.LibTIFF4.include,
+                    "macros": conf.LibTIFF4.macros,
+                },
+            ),
+            (
+                "rawlite",
+                {
+                    "sources": conf.LibRawLite.source,
+                    "include_dirs": conf.LibRawLite.include,
+                    "macros": conf.LibRawLite.macros,
+                },
+            ),
+            (
+                "png",
+                {
+                    "sources": conf.LibPNG.source,
+                    "include_dirs": conf.LibPNG.include,
+                    "macros": conf.LibPNG.macros,
+                },
+            ),
+            (
+                "openjpeg",
+                {
+                    "sources": conf.LibOpenJPEG.source,
+                    "include_dirs": conf.LibOpenJPEG.include,
+                    "macros": conf.LibOpenJPEG.macros,
+                },
+            ),
+            (
+                "jpeg",
+                {
+                    "sources": conf.LibJPEG.source,
+                    "include_dirs": conf.LibJPEG.include,
+                    "macros": conf.LibJPEG.macros,
+                },
+            ),
+            (
+                "freeimage",
+                {
+                    "shared": True,
+                    "sources": conf.FreeImage.source,
+                    "include_dirs": conf.FreeImage.include,
+                    "macros": conf.FreeImage.macros,
+                    "libraries": conf.FreeImage.libraries,
+                },
+            ),
+        ]
+    else:
+        import linux_conf as conf
+
+        libraries = [
+            (
+                "freeimage",
+                {
+                    "shared": True,
+                    "sources": conf.FreeImage.source,
+                    "include_dirs": conf.FreeImage.include,
+                    "macros": conf.FreeImage.macros,
+                    "libraries": conf.FreeImage.libraries,
+                    "compiler_preargs": conf.FreeImage.preflags,
+                    "compiler_postargs": conf.FreeImage.cflags,
+                    "linker_preargs": conf.FreeImage.linker_preargs,
+                    "linker_postargs": conf.FreeImage.linker_postargs,
+                },
+            ),
+        ]
 
     setup_kwargs.update(
         {
-            "libraries": [
-                (
-                    "zlib",
-                    {
-                        "sources": conf.ZLib.source,
-                        "include_dirs": conf.ZLib.include,
-                        "macros": conf.ZLib.macros,
-                    },
-                ),
-                (
-                    "jxr",
-                    {
-                        "sources": conf.LibJXR.source,
-                        "include_dirs": conf.LibJXR.include,
-                        "macros": conf.LibJXR.macros,
-                    },
-                ),
-                (
-                    "openexr",
-                    {
-                        "sources": conf.OpenEXR.source,
-                        "include_dirs": conf.OpenEXR.include,
-                        "macros": conf.OpenEXR.macros,
-                    },
-                ),
-                (
-                    "webp",
-                    {
-                        "sources": conf.LibWebP.source,
-                        "include_dirs": conf.LibWebP.include,
-                        "macros": conf.LibWebP.macros,
-                    },
-                ),
-                (
-                    "tiff4",
-                    {
-                        "sources": conf.LibTIFF4.source,
-                        "include_dirs": conf.LibTIFF4.include,
-                        "macros": conf.LibTIFF4.macros,
-                    },
-                ),
-                (
-                    "rawlite",
-                    {
-                        "sources": conf.LibRawLite.source,
-                        "include_dirs": conf.LibRawLite.include,
-                        "macros": conf.LibRawLite.macros,
-                    },
-                ),
-                (
-                    "png",
-                    {
-                        "sources": conf.LibPNG.source,
-                        "include_dirs": conf.LibPNG.include,
-                        "macros": conf.LibPNG.macros,
-                    },
-                ),
-                (
-                    "openjpeg",
-                    {
-                        "sources": conf.LibOpenJPEG.source,
-                        "include_dirs": conf.LibOpenJPEG.include,
-                        "macros": conf.LibOpenJPEG.macros,
-                    },
-                ),
-                (
-                    "jpeg",
-                    {
-                        "sources": conf.LibJPEG.source,
-                        "include_dirs": conf.LibJPEG.include,
-                        "macros": conf.LibJPEG.macros,
-                    },
-                ),
-                (
-                    "freeimage",
-                    {
-                        "shared": True,
-                        "sources": conf.FreeImage.source,
-                        "include_dirs": conf.FreeImage.include,
-                        "macros": conf.FreeImage.macros,
-                        "libraries": conf.FreeImage.libraries,
-                    },
-                ),
-            ],
+            "libraries": libraries,
             "options": {
                 "build_clib": {
                     "shared_location": "imageio_freeimage/_lib",
