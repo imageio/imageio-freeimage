@@ -352,7 +352,7 @@ class Freeimage(object):
         self._messages = []
 
         # Select functype for error handler
-        if sys.platform.startswith("win"):
+        if platform.system() == "Windows":
             functype = ctypes.WINFUNCTYPE
         else:
             functype = ctypes.CFUNCTYPE
@@ -392,22 +392,8 @@ class Freeimage(object):
         try to download the imageio version and try again.
         """
         # Load library and register API
-        success = False
-        try:
-            # Try without forcing a download, but giving preference
-            # to the imageio-provided lib (if previously downloaded)
-            self._load_freeimage()
-            self._register_api()
-            if self.lib.FreeImage_GetVersion().decode("utf-8") >= "3.15":
-                success = True
-        except OSError:
-            pass
-
-        if not success:
-            # Ensure we have our own lib, try again
-            get_freeimage_lib()
-            self._load_freeimage()
-            self._register_api()
+        self._load_freeimage()
+        self._register_api()
 
         # Wrap up
         self.lib.FreeImage_SetOutputMessage(self._error_handler)
@@ -416,13 +402,16 @@ class Freeimage(object):
     def _load_freeimage(self):
         if platform.system() == "Windows":
             target = str(Path(__file__).parent / "_lib" / "freeimage.dll")
+        elif platform.system() == "Linux":
+            target = str(Path(__file__).parent / "_lib" / "libfreeimage.so")
         else:
             target = None
 
         # If IMAGEIO_FREEIMAGE_LIB is set use it as target
-        lib = os.getenv("IMAGEIO_FREEIMAGE_LIB", None)
-        if lib is not None:
-            target = lib
+        target = os.getenv("IMAGEIO_FREEIMAGE_LIB", target)
+
+        if target is None:
+            raise ImportError("Could not load FreeImage.")
 
         if platform.system() == "Windows":
             loader = ctypes.windll
