@@ -248,25 +248,12 @@ def build(setup_kwargs):
                 },
             ),
         ]
+    elif platform.system() == "Darwin":
+        raise RuntimeError("Compilation on Mac is not implemented yet.")
     else:
-        import linux_conf as conf
+        from linux_conf import freeimage as freeimage_config
 
-        libraries = [
-            (
-                "freeimage",
-                {
-                    "shared": True,
-                    "sources": conf.FreeImage.source,
-                    "include_dirs": conf.FreeImage.include,
-                    "macros": conf.FreeImage.macros,
-                    "libraries": conf.FreeImage.libraries,
-                    "compiler_preargs": conf.FreeImage.preflags,
-                    "compiler_postargs": conf.FreeImage.cflags,
-                    "linker_preargs": conf.FreeImage.linker_preargs,
-                    "linker_postargs": conf.FreeImage.linker_postargs,
-                },
-            ),
-        ]
+        libraries = [("freeimage", freeimage_config)]
 
     setup_kwargs.update(
         {

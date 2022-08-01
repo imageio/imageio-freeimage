@@ -1,11 +1,6 @@
-class FreeImage:
-    macros = [
-        ("OPJ_STATIC", None),
-        ("DISABLE_PERF_MEASUREMENT", None),
-        ("__ANSI__", None),
-        ("NO_LCMS", None),
-    ]
-    source = [
+freeimage = {
+    "shared": True,
+    "sources": [
         "FreeImage/Source/FreeImage/BitmapAccess.cpp",
         "FreeImage/Source/FreeImage/ColorLookup.cpp",
         "FreeImage/Source/FreeImage/ConversionRGBA16.cpp",
@@ -477,8 +472,8 @@ class FreeImage:
         "FreeImage/Source/LibJXR/jxrgluelib/JXRGlueJxr.c",
         "FreeImage/Source/LibJXR/jxrgluelib/JXRGluePFC.c",
         "FreeImage/Source/LibJXR/jxrgluelib/JXRMeta.c",
-    ]
-    include = [
+    ],
+    "include_dirs": [
         "FreeImage/Source",
         "FreeImage/Source/Metadata",
         "FreeImage/Source/FreeImageToolkit",
@@ -504,21 +499,26 @@ class FreeImage:
         "FreeImage/Source/LibJXR/common/include",
         "FreeImage/Source/LibJXR/image/sys",
         "FreeImage/Source/LibJXR/jxrgluelib",
-    ]
-    libraries = []
-    preflags = [
+    ],
+    "macros": [
+        ("OPJ_STATIC", None),
+        ("DISABLE_PERF_MEASUREMENT", None),
+        ("__ANSI__", None),
+        ("NO_LCMS", None),
+    ],
+    "compiler_preargs": [
         "-O3",
         "-fPIC",
         "-fexceptions",
         "-fvisibility=hidden",
         "-Wno-ctor-dtor-privacy",
-    ]
-    cflags = []
-    linker_preargs = [
+    ],
+    "linker_preargs": [
         "-s",
         "-shared",
         "-Wl,-soname,libfreeimage.so",
-    ]
-    linker_postargs = [
+    ],
+    "linker_postargs": [
         "-lstdc++",
-    ]
+    ],
+}
