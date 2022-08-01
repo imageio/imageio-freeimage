@@ -2,7 +2,13 @@
 
 [![CI](https://github.com/imageio/imageio-freeimage/actions/workflows/ci.yaml/badge.svg?branch=master)](https://github.com/imageio/imageio-freeimage/actions/workflows/ci.yaml)
 
-ImageIO FreeImage is an ImageIO plugin for the FreeImage library. In other words,
+> **Warning**
+> 
+> This repo is licensed under the *FreeImage Open Source Dual-License* and
+> **not** the typical *BSD-2* license we use for everything else. Check out the
+> LICENSE document in this repo and make sure you understand the consequences.
+
+ImageIO FreeImage is a ImageIO plugin for the FreeImage library. In other words,
 it allows using [FreeImage](https://freeimage.sourceforge.io/) with
 [ImageIO](https://github.com/imageio/imageio).
 
@@ -10,6 +16,7 @@ it allows using [FreeImage](https://freeimage.sourceforge.io/) with
 
 ```
 pip install imageio-freeimage
+python -c "imageio.plugins.freeimage.download()"
 ```
 
 ## Usage (and Examples)
