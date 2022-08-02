@@ -14,17 +14,6 @@ import io
 
 class CustomDevelop(develop):
     def run(self) -> None:
-        # download freeimage
-        location = Path(__file__).parent / "FreeImage"
-        print(f"Downloading FreeImage into: {location}")
-        if not Path(location).exists():
-            location.mkdir(parents=True)
-            r = requests.get(
-                "https://sourceforge.net/projects/freeimage/files/Source%20Distribution/3.18.0/FreeImage3180.zip/download"
-            )
-            z = zipfile.ZipFile(io.BytesIO(r.content))
-            z.extractall(location)
-
         # build freeimage
         self.run_command("build_clib")
 
@@ -45,6 +34,16 @@ class CustomBuildClib(build_clib):
         super().initialize_options()
 
     def run(self) -> None:
+        # download freeimage
+        location = Path(__file__).parent
+        print(f"Downloading FreeImage into: {location}")
+        if not Path(location / "FreeImage").exists():
+            r = requests.get(
+                "https://sourceforge.net/projects/freeimage/files/Source%20Distribution/3.18.0/FreeImage3180.zip/download"
+            )
+            z = zipfile.ZipFile(io.BytesIO(r.content))
+            z.extractall(location)
+
         super().run()
 
         if self.shared_location is not None and self.libraries is not None:
