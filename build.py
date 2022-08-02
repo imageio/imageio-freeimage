@@ -15,12 +15,15 @@ import io
 class CustomDevelop(develop):
     def run(self) -> None:
         # download freeimage
-        if not Path("FreeImage").exists():
+        location = Path(__file__).parent / "FreeImage"
+        print(f"Downloading FreeImage into: {location}")
+        if not Path(location).exists():
+            location.mkdir(parents=True)
             r = requests.get(
                 "https://sourceforge.net/projects/freeimage/files/Source%20Distribution/3.18.0/FreeImage3180.zip/download"
             )
             z = zipfile.ZipFile(io.BytesIO(r.content))
-            z.extractall(".")
+            z.extractall(location)
 
         # build freeimage
         self.run_command("build_clib")
