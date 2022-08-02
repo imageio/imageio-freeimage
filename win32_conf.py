@@ -1,8 +1,8 @@
 from pathlib import Path
 
-
-class FreeImage:
-    macros = [
+freeimage_config = {
+    "shared": True,
+    "macros": [
         ("WIN32", None),
         ("NDEBUG", None),
         ("_WINDOWS", None),
@@ -11,16 +11,16 @@ class FreeImage:
         ("FREEIMAGE_EXPORTS", None),
         ("_CRT_SECURE_NO_DEPRECATE", None),
         ("LIBRAW_NODLL", None),
-    ]
-    source = [
+    ],
+    "sources": [
         *[str(x) for x in Path("FreeImage/Source/FreeImage").glob("*.cpp")],
         *[str(x) for x in Path("FreeImage/Source/Metadata").glob("*.cpp")],
         *[str(x) for x in Path("FreeImage/Source/FreeImageToolkit").glob("*.cpp")],
         *[str(x) for x in Path("FreeImage/Source/FreeImage").glob("*.c")],
         *[str(x) for x in Path("FreeImage/Source/Metadata").glob("*.c")],
         *[str(x) for x in Path("FreeImage/Source/FreeImageToolkit").glob("*.c")],
-    ]
-    include = [
+    ],
+    "include_dirs": [
         "FreeImage/Source",
         "FreeImage/Source/ZLib",
         "FreeImage/Source/DeprecationManager",
@@ -32,8 +32,8 @@ class FreeImage:
         "FreeImage/Source/OpenEXR/IlmThread",
         "FreeImage/Source/LibJXR/jxrgluelib",
         "FreeImage/Source/LibJXR/image/sys",
-    ]
-    libraries = [
+    ],
+    "libraries": [
         "jpeg",
         "jxr",
         "openjpeg",
@@ -43,17 +43,17 @@ class FreeImage:
         "webp",
         "openexr",
         "zlib",
-    ]
+    ],
+}
 
-
-class LibJPEG:
-    macros = [
+libjpeg_conf = {
+    "macros": [
         ("WIN32", None),
         ("NDEBUG", None),
         ("_LIB", None),
         ("_CRT_SECURE_NO_DEPRECATE", None),
-    ]
-    source = [
+    ],
+    "sources": [
         "FreeImage/Source/LibJPEG/jaricom.c",
         "FreeImage/Source/LibJPEG/jcapimin.c",
         "FreeImage/Source/LibJPEG/jcapistd.c",
@@ -101,21 +101,20 @@ class LibJPEG:
         "FreeImage/Source/LibJPEG/jquant2.c",
         "FreeImage/Source/LibJPEG/jutils.c",
         "FreeImage/Source/LibJPEG/transupp.c",
-    ]
-    include = [
+    ],
+    "include_dirs": [
         "FreeImage/Source/ZLib",
-    ]
+    ],
+}
 
-
-class LibJXR:
-    macros = [
+libjxr_conf = {
+    "macros": [
         ("WIN32", None),
         ("NDEBUG", None),
         ("_LIB", None),
         ("DISABLE_PERF_MEASUREMENT", None),
-    ]
-
-    source = [
+    ],
+    "sources": [
         "FreeImage/Source/LibJXR/image/decode/decode.c",
         "FreeImage/Source/LibJXR/image/decode/JXRTranscode.c",
         "FreeImage/Source/LibJXR/image/decode/postprocess.c",
@@ -139,23 +138,22 @@ class LibJXR:
         "FreeImage/Source/LibJXR/jxrgluelib/JXRGlueJxr.c",
         "FreeImage/Source/LibJXR/jxrgluelib/JXRGluePFC.c",
         "FreeImage/Source/LibJXR/jxrgluelib/JXRMeta.c",
-    ]
-
-    include = [
+    ],
+    "include_dirs": [
         "FreeImage/Source/LibJXR/image/sys",
         "FreeImage/Source/LibJXR/jxrgluelib",
-    ]
+    ],
+}
 
-
-class LibOpenJPEG:
-    macros = [
+libopenjpeg_conf = {
+    "macros": [
         ("WIN32", None),
         ("NDEBUG", None),
         ("_LIB", None),
         ("OPJ_STATIC", None),
         ("_CRT_SECURE_NO_DEPRECATE", None),
-    ]
-    source = [
+    ],
+    "sources": [
         "FreeImage/Source/LibOpenJPEG/bio.c",
         "FreeImage/Source/LibOpenJPEG/cio.c",
         "FreeImage/Source/LibOpenJPEG/dwt.c",
@@ -175,18 +173,17 @@ class LibOpenJPEG:
         "FreeImage/Source/LibOpenJPEG/t2.c",
         "FreeImage/Source/LibOpenJPEG/tcd.c",
         "FreeImage/Source/LibOpenJPEG/tgt.c",
-    ]
-    include = []
+    ],
+}
 
-
-class LibPNG:
-    macros = [
+libpng_conf = {
+    "macros": [
         ("WIN32", None),
         ("NDEBUG", None),
         ("_LIB", None),
         ("_CRT_SECURE_NO_DEPRECATE", None),
-    ]
-    source = [
+    ],
+    "sources": [
         "FreeImage/Source/LibPNG/png.c",
         "FreeImage/Source/LibPNG/pngerror.c",
         "FreeImage/Source/LibPNG/pngget.c",
@@ -202,42 +199,42 @@ class LibPNG:
         "FreeImage/Source/LibPNG/pngwrite.c",
         "FreeImage/Source/LibPNG/pngwtran.c",
         "FreeImage/Source/LibPNG/pngwutil.c",
-    ]
-    include = [
+    ],
+    "include_dirs": [
         "FreeImage/Source/ZLib",
-    ]
+    ],
+}
 
-
-class LibRawLite:
-    macros = [
+librawlite_conf = {
+    "macros": [
         ("WIN32", None),
         ("NDEBUG", None),
         ("_LIB", None),
         ("_CRT_SECURE_NO_WARNINGS", None),
         ("LIBRAW_NODLL", None),
-    ]
-    source = [
+    ],
+    "sources": [
         "FreeImage/Source/LibRawLite/internal/dcraw_common.cpp",
         "FreeImage/Source/LibRawLite/internal/dcraw_fileio.cpp",
         "FreeImage/Source/LibRawLite/internal/demosaic_packs.cpp",
         "FreeImage/Source/LibRawLite/src/libraw_c_api.cpp",
         "FreeImage/Source/LibRawLite/src/libraw_cxx.cpp",
         "FreeImage/Source/LibRawLite/src/libraw_datastream.cpp",
-    ]
-    include = [
+    ],
+    "include_dirs": [
         "FreeImage/Source/LibRawLite",
         "FreeImage/Source/ZLib",
-    ]
+    ],
+}
 
-
-class LibTIFF4:
-    macros = [
+libtiff4_conf = {
+    "macros": [
         ("WIN32", None),
         ("NDEBUG", None),
         ("_LIB", None),
         ("_CRT_SECURE_NO_DEPRECATE", None),
-    ]
-    source = [
+    ],
+    "sources": [
         "FreeImage/Source/LibTIFF4/tif_aux.c",
         "FreeImage/Source/LibTIFF4/tif_close.c",
         "FreeImage/Source/LibTIFF4/tif_codec.c",
@@ -274,31 +271,31 @@ class LibTIFF4:
         "FreeImage/Source/LibTIFF4/tif_warning.c",
         "FreeImage/Source/LibTIFF4/tif_write.c",
         "FreeImage/Source/LibTIFF4/tif_zip.c",
-    ]
-    include = [
+    ],
+    "include_dirs": [
         "FreeImage/Source/ZLib",
         "FreeImage/Source/LibJPEG",
-    ]
+    ],
+}
 
-
-class LibWebP:
-    macros = [
+libwebp_conf = {
+    "macros": [
         ("WIN32", None),
         ("NDEBUG", None),
         ("_LIB", None),
-    ]
-    source = [str(x) for x in Path("FreeImage/Source/LibWebP/src/").glob("**/*.c")]
-    include = ["FreeImage/Source/LibWebP"]
+    ],
+    "sources": [str(x) for x in Path("FreeImage/Source/LibWebP/src/").glob("**/*.c")],
+    "include_dirs": ["FreeImage/Source/LibWebP"],
+}
 
-
-class OpenEXR:
-    macros = [
+openexr_conf = {
+    "macros": [
         ("WIN32", None),
         ("NDEBUG", None),
         ("_LIB", None),
         ("_CRT_SECURE_NO_DEPRECATE", None),
-    ]
-    source = [
+    ],
+    "sources": [
         "FreeImage/Source/OpenEXR/IexMath/IexMathFpu.cpp",
         "FreeImage/Source/OpenEXR/IlmImf/b44ExpLogTable.cpp",
         "FreeImage/Source/OpenEXR/IlmImf/ImfAcesFile.cpp",
@@ -405,8 +402,8 @@ class OpenEXR:
         "FreeImage/Source/OpenEXR/IlmThread/IlmThreadPool.cpp",
         "FreeImage/Source/OpenEXR/IlmThread/IlmThreadSemaphore.cpp",
         "FreeImage/Source/OpenEXR/IexMath/IexMathFloatExc.cpp",
-    ]
-    include = [
+    ],
+    "include_dirs": [
         "FreeImage/Source/OpenEXR/",
         "FreeImage/Source/OpenEXR/IlmImf",
         "FreeImage/Source/OpenEXR/Imath",
@@ -415,18 +412,17 @@ class OpenEXR:
         "FreeImage/Source/OpenEXR/Half",
         "FreeImage/Source/OpenEXR/IlmThread",
         "FreeImage/Source/ZLib",
-    ]
-    libraries = ["zlib"]
+    ],
+}
 
-
-class ZLib:
-    macros = [
+zlib_config = {
+    "macros": [
         ("WIN32", None),
         ("NDEBUG", None),
         ("_LIB", None),
         ("_CRT_SECURE_NO_DEPRECATE", None),
         ("_CRT_SECURE_NO_WARNINGS", None),
         ("_SCL_SECURE_NO_WARNINGS", None),
-    ]
-    source = [str(x) for x in Path("FreeImage/Source/Zlib").glob("*.c")]
-    include = []
+    ],
+    "sources": [str(x) for x in Path("FreeImage/Source/Zlib").glob("*.c")],
+}

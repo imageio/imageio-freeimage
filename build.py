@@ -167,87 +167,24 @@ def build(setup_kwargs):
         import win32_conf as conf
 
         libraries = [
-            (
-                "zlib",
-                {
-                    "sources": conf.ZLib.source,
-                    "include_dirs": conf.ZLib.include,
-                    "macros": conf.ZLib.macros,
-                },
-            ),
-            (
-                "jxr",
-                {
-                    "sources": conf.LibJXR.source,
-                    "include_dirs": conf.LibJXR.include,
-                    "macros": conf.LibJXR.macros,
-                },
-            ),
-            (
-                "openexr",
-                {
-                    "sources": conf.OpenEXR.source,
-                    "include_dirs": conf.OpenEXR.include,
-                    "macros": conf.OpenEXR.macros,
-                },
-            ),
-            (
-                "webp",
-                {
-                    "sources": conf.LibWebP.source,
-                    "include_dirs": conf.LibWebP.include,
-                    "macros": conf.LibWebP.macros,
-                },
-            ),
-            (
-                "tiff4",
-                {
-                    "sources": conf.LibTIFF4.source,
-                    "include_dirs": conf.LibTIFF4.include,
-                    "macros": conf.LibTIFF4.macros,
-                },
-            ),
-            (
-                "rawlite",
-                {
-                    "sources": conf.LibRawLite.source,
-                    "include_dirs": conf.LibRawLite.include,
-                    "macros": conf.LibRawLite.macros,
-                },
-            ),
+            ("zlib", conf.zlib_config),
+            ("jxr", conf.libjxr_conf),
+            ("openexr", conf.openexr_conf),
+            ("webp", conf.libwebp_conf),
+            ("tiff4", conf.libtiff4_conf),
+            ("rawlite", conf.librawlite_conf),
             (
                 "png",
-                {
-                    "sources": conf.LibPNG.source,
-                    "include_dirs": conf.LibPNG.include,
-                    "macros": conf.LibPNG.macros,
-                },
+                conf.libpng_conf,
             ),
             (
                 "openjpeg",
-                {
-                    "sources": conf.LibOpenJPEG.source,
-                    "include_dirs": conf.LibOpenJPEG.include,
-                    "macros": conf.LibOpenJPEG.macros,
-                },
+                conf.libopenjpeg_conf,
             ),
-            (
-                "jpeg",
-                {
-                    "sources": conf.LibJPEG.source,
-                    "include_dirs": conf.LibJPEG.include,
-                    "macros": conf.LibJPEG.macros,
-                },
-            ),
+            ("jpeg", conf.libjpeg_conf),
             (
                 "freeimage",
-                {
-                    "shared": True,
-                    "sources": conf.FreeImage.source,
-                    "include_dirs": conf.FreeImage.include,
-                    "macros": conf.FreeImage.macros,
-                    "libraries": conf.FreeImage.libraries,
-                },
+                conf.freeimage_config,
             ),
         ]
     elif platform.system() == "Darwin":
