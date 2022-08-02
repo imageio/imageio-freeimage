@@ -114,6 +114,7 @@ jobs:
         env:
           CIBW_SKIP: "cp36-*"
           CIBW_REPAIR_WHEEL_COMMAND_LINUX: ""
+          CIBW_BUILD_VERBOSITY: 3
         # to supply options, put them in 'env', like:
         # env:
         #   CIBW_SOME_OPTION: value
