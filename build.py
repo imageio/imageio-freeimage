@@ -189,7 +189,9 @@ def build(setup_kwargs):
             ),
         ]
     elif platform.system() == "Darwin":
-        raise RuntimeError("Compilation on Mac is not implemented yet.")
+        from macos_conf import freeimage as freeimage_config
+
+        libraries = [("freeimage", freeimage_config)]
     else:
         from linux_conf import freeimage as freeimage_config
 
