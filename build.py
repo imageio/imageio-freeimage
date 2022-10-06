@@ -39,7 +39,8 @@ class CustomBuildClib(build_clib):
         print(f"Downloading FreeImage into: {location}")
         if not Path(location / "FreeImage").exists():
             r = requests.get(
-                "https://sourceforge.net/projects/freeimage/files/Source%20Distribution/3.18.0/FreeImage3180.zip/download"
+                "https://sourceforge.net/projects/freeimage/files/"
+                "Source%20Distribution/3.18.0/FreeImage3180.zip/download"
             )
             z = zipfile.ZipFile(io.BytesIO(r.content))
             z.extractall(location)
