@@ -56,5 +56,8 @@ jobs:
           path: ./dist/
 
       - name: Publish Wheels
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_ACCOUNT }}
         run : |
-          poetry publish --password=${{secrets.PYPI_ACCOUNT}} --username=__token__
+          poetry config pypi-token.pypi $PYPI_TOKEN
+          poetry publish
