@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "imageio_freeimage"
-version = "0.1.1"
+version = "0.1.2"
 description = "A plugin for ImageIO that wraps the FreeImage library"
 authors = ["ImageIO collaborators"]
 license = "FreeImage Open Source Dual-License"
