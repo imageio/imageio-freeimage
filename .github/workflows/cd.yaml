@@ -50,11 +50,11 @@ jobs:
           virtualenvs-create: True
           virtualenvs-in-project: True
 
-      - name: Download a single artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: wheelhouse
-          path: ./dist/
+      # - name: Download a single artifact
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: wheelhouse
+      #     path: ./dist/
 
       - name: Publish Wheels
         env:
