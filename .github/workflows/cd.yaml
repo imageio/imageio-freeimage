@@ -46,7 +46,6 @@ jobs:
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
-          version: 1.2.1
           virtualenvs-create: True
           virtualenvs-in-project: True
 
@@ -60,6 +59,6 @@ jobs:
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_ACCOUNT }}
         run : |
-          poetry version
+          poetry --version
           poetry config pypi-token.pypi $PYPI_TOKEN
           poetry publish
