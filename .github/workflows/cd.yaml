@@ -37,7 +37,7 @@ jobs:
           path: ./wheelhouse/*.whl
 
   deploy:
-    depends-on: wheels
+    needs: wheels
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
