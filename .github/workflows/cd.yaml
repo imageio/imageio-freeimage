@@ -57,4 +57,4 @@ jobs:
 
       - name: Publish Wheels
         run : |
-          poetry publish --username=__token__ --password=${{ secrets.PYPI_ACCOUNT }}
+          poetry publish --password=${{secrets.PYPI_ACCOUNT}} --username=__token__
