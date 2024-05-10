@@ -33,7 +33,7 @@ img = iio.imread("imageio:chelsea.png", plugin="PNG-FI")
 ## Why ImageIO FreeImage
 
 Based on discussions over at ImageIO's main repository, we have decided to spin
-out the FreeImage plugin. This was done for two reasons
+out the FreeImage plugin. This was done for several reasons
 
 1. It is/was unclear how permissible the FreeImage license is, how exactly it
 interacts with BSD (ImageIO's license), and what that means for downstream users
