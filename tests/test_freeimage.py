@@ -52,7 +52,7 @@ def vendored_lib(request, tmp_path_factory):
 def setup_library(tmp_path_factory, vendored_lib):
 
     # Checks if freeimage is installed by the system
-    from imageio.plugins.freeimage import fi
+    from imageio_freeimage.freeimage import fi
 
     use_imageio_binary = not fi.has_lib()
 
@@ -143,13 +143,6 @@ def assert_close(im1, im2, tol=0.0):
     assert np.abs(diff).max() <= tol
     # import visvis as vv
     # vv.subplot(121); vv.imshow(im1); vv.subplot(122); vv.imshow(im2)
-
-
-def test_download():
-    # this is a regression test
-    # see: https://github.com/imageio/imageio/issues/690
-
-    assert hasattr(imageio.plugins.freeimage, "download")
 
 
 def test_get_ref_im():

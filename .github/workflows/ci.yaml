@@ -36,59 +36,90 @@ jobs:
           linters: flake8
           run: flake8 .
 
-  cpython:
-    name: "${{ matrix.os }} / CPython ${{ matrix.pyversion }}"
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: true
-      matrix:
-        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        pyversion: ["3.7", "3.8", "3.9", "3.10"]
-    defaults:
-      run:
-        shell: bash
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-      - name: Set up Python ${{ matrix.pyversion }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.pyversion }}
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: True
-          virtualenvs-in-project: True
-      - name: Install Project
-        shell: bash
-        run: |
-          poetry install --no-interaction -v
-      - name: Run Tests
-        run: |
-          source $VENV
-          pytest -v --github-username "anything" --github-token ${{ secrets.GITHUB_TOKEN }}
+  # cpython:
+  #   name: "${{ matrix.os }} / CPython ${{ matrix.pyversion }}"
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     fail-fast: true
+  #     matrix:
+  #       os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+  #       pyversion: ["3.7", "3.8", "3.9", "3.10"]
+  #   defaults:
+  #     run:
+  #       shell: bash
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 2
+  #     - name: Set up Python ${{ matrix.pyversion }}
+  #       uses: actions/setup-python@v2
+  #       with:
+  #         python-version: ${{ matrix.pyversion }}
+  #     - name: Install Poetry
+  #       uses: snok/install-poetry@v1
+  #       with:
+  #         virtualenvs-create: True
+  #         virtualenvs-in-project: True
+  #     - name: Install Project
+  #       shell: bash
+  #       run: |
+  #         poetry install --no-interaction -v
+  #     - name: Run Tests
+  #       run: |
+  #         source $VENV
+  #         pytest -v --github-username "anything" --github-token ${{ secrets.GITHUB_TOKEN }}
 
-  pypy:
-    name: "${{ matrix.os }} / ${{ matrix.pyversion }}"
+  # pypy:
+  #   name: "${{ matrix.os }} / ${{ matrix.pyversion }}"
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     fail-fast: true
+  #     matrix:
+  #       os: ["ubuntu-latest", "macos-latest"]
+  #       pyversion: ["pypy-3.7", "pypy-3.8", "pypy-3.9"]
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Set up pypy
+  #       uses: actions/setup-python@v2
+  #       with:
+  #         python-version: "${{ matrix.pyversion }}"
+  #     - name: Install Poetry & Project
+  #       shell: bash
+  #       run: |
+  #         pypy3 -m pip install poetry
+  #         pypy3 -m poetry config virtualenvs.in-project true
+  #         pypy3 -m poetry install --no-interaction -v
+  #     - name: Run Unit tests
+  #       run: |
+  #         pypy3 -m poetry run pytest -v --github-username "anything" --github-token ${{ secrets.GITHUB_TOKEN }}
+
+  wheels:
+    name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: true
       matrix:
-        os: ["ubuntu-latest", "macos-latest"]
-        pyversion: ["pypy-3.7", "pypy-3.8", "pypy-3.9"]
+        os: [macos-11]
+
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up pypy
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+
+      # Used to host cibuildwheel
+      - uses: actions/setup-python@v3
+
+      - name: Install cibuildwheel
+        run: python -m pip install cibuildwheel==2.8.1
+
+      - name: Build wheels
+        run: python -m cibuildwheel --output-dir wheelhouse
+        env:
+          CIBW_SKIP: "cp36-*"
+          CIBW_REPAIR_WHEEL_COMMAND_LINUX: ""
+          # CIBW_BUILD_VERBOSITY: 3
+        # to supply options, put them in 'env', like:
+        # env:
+        #   CIBW_SOME_OPTION: value
+
+      - uses: actions/upload-artifact@v3
         with:
-          python-version: "${{ matrix.pyversion }}"
-      - name: Install Poetry & Project
-        shell: bash
-        run: |
-          pypy3 -m pip install poetry
-          pypy3 -m poetry config virtualenvs.in-project true
-          pypy3 -m poetry install --no-interaction -v
-      - name: Run Unit tests
-        run: |
-          pypy3 -m poetry run pytest -v --github-username "anything" --github-token ${{ secrets.GITHUB_TOKEN }}
+          name: wheelhouse
+          path: ./wheelhouse/*.whl

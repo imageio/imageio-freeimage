@@ -50,8 +50,5 @@ their python code in a browser via pyodide. Those use-cases are more prone to
 problems when ctypes are involved and having them in a dedicated optional
 dependency make this situation easier.
 
-3. Having a dedicated repo for the FreeImage plugin will eventually allow us to
-install the FreeImage library at install time, instead of having to ask users to
-perform post-install steps to download the library. This might also have
-positive implications on platform availability and introspection as we can
-eventually compile FreeImage while building the package.
+3. We can add plumbing to compile FreeImage in CD and ship it precompiled
+   without the need for any post-install actions.

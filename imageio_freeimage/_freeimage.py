@@ -13,86 +13,19 @@ types.
 """
 
 import os
+import platform
 import sys
 import ctypes
 import threading
 import logging
 import numpy
+from pathlib import Path
 
-from imageio.core import (
-    get_remote_file,
-    load_lib,
-    Dict,
-    resource_dirs,
-    IS_PYPY,
-    get_platform,
-    InternetNotAllowedError,
-    NeedDownloadError,
-)
+from imageio.core import Dict, IS_PYPY
 
 logger = logging.getLogger(__name__)
 
 TEST_NUMPY_NO_STRIDES = False  # To test pypy fallback
-
-FNAME_PER_PLATFORM = {
-    "osx32": "libfreeimage-3.16.0-osx10.6.dylib",  # universal library
-    "osx64": "libfreeimage-3.16.0-osx10.6.dylib",
-    "win32": "FreeImage-3.15.4-win32.dll",
-    "win64": "FreeImage-3.15.1-win64.dll",
-    "linux32": "libfreeimage-3.16.0-linux32.so",
-    "linux64": "libfreeimage-3.16.0-linux64.so",
-}
-
-
-def download(directory=None, force_download=False):
-    """Download the FreeImage library to your computer.
-
-    Parameters
-    ----------
-    directory : str | None
-        The directory where the file will be cached if a download was
-        required to obtain the file. By default, the appdata directory
-        is used. This is also the first directory that is checked for
-        a local version of the file.
-    force_download : bool | str
-        If True, the file will be downloaded even if a local copy exists
-        (and this copy will be overwritten). Can also be a YYYY-MM-DD date
-        to ensure a file is up-to-date (modified date of a file on disk,
-        if present, is checked).
-    """
-    plat = get_platform()
-    if plat and plat in FNAME_PER_PLATFORM:
-        fname = "freeimage/" + FNAME_PER_PLATFORM[plat]
-        get_remote_file(fname=fname, directory=directory, force_download=force_download)
-        fi._lib = None  # allow trying again (needed to make tests work)
-
-
-def get_freeimage_lib():
-    """Ensure we have our version of the binary freeimage lib."""
-
-    lib = os.getenv("IMAGEIO_FREEIMAGE_LIB", None)
-    if lib:  # pragma: no cover
-        return lib
-
-    # Get filename to load
-    # If we do not provide a binary, the system may still do ...
-    plat = get_platform()
-    if plat and plat in FNAME_PER_PLATFORM:
-        try:
-            return get_remote_file("freeimage/" + FNAME_PER_PLATFORM[plat], auto=False)
-        except InternetNotAllowedError:
-            pass
-        except NeedDownloadError:
-            raise NeedDownloadError(
-                "Need FreeImage library. "
-                "You can obtain it with either:\n"
-                "  - download using the command: "
-                "imageio_download_bin freeimage\n"
-                "  - download by calling (in Python): "
-                "imageio.plugins.freeimage.download()\n"
-            )
-        except RuntimeError as e:  # pragma: no cover
-            logger.warning(str(e))
 
 
 # Define function to encode a filename to bytes (for the current system)
@@ -419,7 +352,7 @@ class Freeimage(object):
         self._messages = []
 
         # Select functype for error handler
-        if sys.platform.startswith("win"):
+        if platform.system() == "Windows":
             functype = ctypes.WINFUNCTYPE
         else:
             functype = ctypes.CFUNCTYPE
@@ -459,60 +392,35 @@ class Freeimage(object):
         try to download the imageio version and try again.
         """
         # Load library and register API
-        success = False
-        try:
-            # Try without forcing a download, but giving preference
-            # to the imageio-provided lib (if previously downloaded)
-            self._load_freeimage()
-            self._register_api()
-            if self.lib.FreeImage_GetVersion().decode("utf-8") >= "3.15":
-                success = True
-        except OSError:
-            pass
-
-        if not success:
-            # Ensure we have our own lib, try again
-            get_freeimage_lib()
-            self._load_freeimage()
-            self._register_api()
+        self._load_freeimage()
+        self._register_api()
 
         # Wrap up
         self.lib.FreeImage_SetOutputMessage(self._error_handler)
         self.lib_version = self.lib.FreeImage_GetVersion().decode("utf-8")
 
     def _load_freeimage(self):
+        if platform.system() == "Windows":
+            target = str(Path(__file__).parent / "_lib" / "freeimage.dll")
+        elif platform.system() == "Linux":
+            target = str(Path(__file__).parent / "_lib" / "libfreeimage.so")
+        else:
+            target = None
 
-        # Define names
-        lib_names = ["freeimage", "libfreeimage"]
-        exact_lib_names = [
-            "FreeImage",
-            "libfreeimage.dylib",
-            "libfreeimage.so",
-            "libfreeimage.so.3",
-        ]
-        # Add names of libraries that we provide (that file may not exist)
-        res_dirs = resource_dirs()
-        plat = get_platform()
-        if plat:  # Can be None on e.g. FreeBSD
-            fname = FNAME_PER_PLATFORM[plat]
-            for dir in res_dirs:
-                exact_lib_names.insert(0, os.path.join(dir, "freeimage", fname))
+        # If IMAGEIO_FREEIMAGE_LIB is set use it as target
+        target = os.getenv("IMAGEIO_FREEIMAGE_LIB", target)
 
-        # Add the path specified with IMAGEIO_FREEIMAGE_LIB:
-        lib = os.getenv("IMAGEIO_FREEIMAGE_LIB", None)
-        if lib is not None:
-            exact_lib_names.insert(0, lib)
+        if target is None:
+            raise ImportError("Could not load FreeImage.")
 
-        # Load
-        try:
-            lib, fname = load_lib(exact_lib_names, lib_names, res_dirs)
-        except OSError as err:  # pragma: no cover
-            err_msg = str(err) + "\nPlease install the FreeImage library."
-            raise OSError(err_msg)
+        if platform.system() == "Windows":
+            loader = ctypes.windll
+        else:
+            loader = ctypes.cdll
 
         # Store
-        self._lib = lib
-        self.lib_fname = fname
+        self._lib = loader.LoadLibrary(target)
+        self.lib_fname = target
 
     def _register_api(self):
         # Albert's ctypes pattern
